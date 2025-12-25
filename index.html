@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZonaEducacional Hub - Repositórios</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+        }
+        .tab-active {
+            border-bottom: 3px solid #8b5cf6;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+    <!-- Header -->
+    <header class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <button id="menuToggle" class="lg:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-code-branch text-violet-600 dark:text-violet-400 text-2xl"></i>
+                        <h1 class="text-xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">ZonaEducacional Hub</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="Pesquisar repositórios..." 
+                               class="pl-10 pr-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-500 w-40 md:w-64">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    <button id="darkModeToggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:block"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-xl transform -translate-x-full transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-0">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-semibold">Categorias</h2>
+                <button id="sidebarClose" class="lg:hidden p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <nav>
+                <ul class="space-y-2">
+                    <li>
+                        <button class="category-btn w-full text-left py-2 px-4 rounded-lg hover:bg-violet-100 dark:hover:bg-gray-700 flex items-center space-x-3" data-category="all">
+                            <i class="fas fa-th-large"></i>
+                            <span>Todos os Repositórios</span>
+                            <span class="ml-auto bg-violet-600 text-white text-xs px-2 py-1 rounded-full" id="totalCount">0</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="category-btn w-full text-left py-2 px-4 rounded-lg hover:bg-violet-100 dark:hover:bg-gray-700 flex items-center space-x-3" data-category="ZONAEDUCACIONAL">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>ZonaEducacional</span>
+                            <span class="ml-auto bg-blue-600 text-white text-xs px-2 py-1 rounded-full" id="zonaCount">0</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="category-btn w-full text-left py-2 px-4 rounded-lg hover:bg-violet-100 dark:hover:bg-gray-700 flex items-center space-x-3" data-category="VCDEVAPP">
+                            <i class="fas fa-laptop-code"></i>
+                            <span>VCDevApp</span>
+                            <span class="ml-auto bg-green-600 text-white text-xs px-2 py-1 rounded-full" id="vcCount">0</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="category-btn w-full text-left py-2 px-4 rounded-lg hover:bg-violet-100 dark:hover:bg-gray-700 flex items-center space-x-3" data-category="SERGIODEV">
+                            <i class="fas fa-user-cog"></i>
+                            <span>SergioDev</span>
+                            <span class="ml-auto bg-orange-600 text-white text-xs px-2 py-1 rounded-full" id="sergioCount">0</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+            <div class="mt-8 p-4 bg-gradient-to-r from-violet-500 to-indigo-600 rounded-lg text-white">
+                <h3 class="font-semibold mb-2">Estatísticas</h3>
+                <div class="text-sm space-y-1">
+                    <p>Total de projetos: <span id="totalProjects" class="font-bold">0</span></p>
+                    <p>Última atualização: <span id="lastUpdate" class="font-bold">Hoje</span></p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-6 lg:ml-0">
+        <!-- Filter Tags -->
+        <div class="mb-6 flex flex-wrap gap-2" id="filterTags">
+            <button class="filter-tag px-4 py-2 rounded-full bg-violet-600 text-white text-sm" data-filter="all">
+                Todos
+            </button>
+            <button class="filter-tag px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-sm" data-filter="app">
+                Aplicações
+            </button>
+            <button class="filter-tag px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-sm" data-filter="game">
+                Jogos
+            </button>
+            <button class="filter-tag px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-sm" data-filter="tool">
+                Ferramentas
+            </button>
+            <button class="filter-tag px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-sm" data-filter="portal">
+                Portais
+            </button>
+        </div>
+
+        <!-- Repositories Grid -->
+        <div id="repositoriesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <!-- Cards will be dynamically inserted here -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-12">
+            <i class="fas fa-search text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+            <h3 class="text-xl font-semibold mb-2">Nenhum repositório encontrado</h3>
+            <p class="text-gray-500 dark:text-gray-400">Tente ajustar sua pesquisa ou filtros</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-800 shadow-lg mt-12">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    © 2024 ZonaEducacional Hub. Todos os direitos reservados.
+                </p>
+                <div class="flex space-x-4 mt-4 md:mt-0">
+                    <a href="https://github.com/zonaeducacional" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-violet-600">
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-violet-600">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-violet-600">
+                        <i class="fab fa-linkedin text-xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Repository data
+        const repositories = [
+            // ZONAEDUCACIONAL
+            { url: "https://ini-eight.vercel.app/", name: "INI Eight", category: "ZONAEDUCACIONAL", type: "app", description: "Plataforma educacional interativa" },
+            { url: "https://geradores-gamma.vercel.app/", name: "Geradores Gamma", category: "ZONAEDUCACIONAL", type: "tool", description: "Gerador de conteúdo educacional" },
+            { url: "https://chat-beta-eosin-16.vercel.app/", name: "Chat Beta", category: "ZONAEDUCACIONAL", type: "app", description: "Sistema de chat educacional" },
+            { url: "https://zonaeducacional.github.io/portal/", name: "Portal Zona", category: "ZONAEDUCACIONAL", type: "portal", description: "Portal principal educacional" },
+            { url: "https://zonaeducacional.github.io/repositorio9/", name: "Repositório 9", category: "ZONAEDUCACIONAL", type: "tool", description: "Repositório de recursos educacionais" },
+            { url: "https://zonaeducacional.github.io/zonaeducacional-portal/", name: "Zona Portal", category: "ZONAEDUCACIONAL", type: "portal", description: "Portal de conteúdo educacional" },
+            { url: "https://diario-puce.vercel.app/", name: "Diário PUCE", category: "ZONAEDUCACIONAL", type: "app", description: "Diário de bordo educacional" },
+            { url: "https://v0-aprimorar-rpg.vercel.app/", name: "RPG Aprimorado", category: "ZONAEDUCACIONAL", type: "game", description: "Jogo educacional RPG" },
+            { url: "https://zonaeducacional.github.io/poesia/", name: "Poesia", category: "ZONAEDUCACIONAL", type: "app", description: "Plataforma de poesia educacional" },
+            { url: "https://educast-kappa.vercel.app/", name: "EduCast", category: "ZONAEDUCACIONAL", type: "app", description: "Plataforma de podcasts educacionais" },
+            { url: "https://zonaeducacional.github.io/hub/", name: "Hub Edu", category: "ZONAEDUCACIONAL", type: "portal", description: "Hub central de recursos" },
+            { url: "https://zonaeducacional.github.io/inferencia/", name: "Inferência", category: "ZONAEDUCACIONAL", type: "tool", description: "Ferramenta de inferência educacional" },
+            { url: "https://zonaeducacional.github.io/literosferatexto/", name: "Literosfera Texto", category: "ZONAEDUCACIONAL", type: "app", description: "Plataforma de análise textual" },
+            { url: "https://zonaeducacional.github.io/detetive/", name: "Detetive", category: "ZONAEDUCACIONAL", type: "game", description: "Jogo educacional de detetive" },
+            { url: "https://v0-melhorar-app-escola.vercel.app/", name: "App Escola", category: "ZONAEDUCACIONAL", type: "app", description: "Aplicativo escolar melhorado" },
+            { url: "https://creative-text-flow.lovable.app/", name: "Creative Text Flow", category: "ZONAEDUCACIONAL", type: "tool", description: "Ferramenta criativa de texto" },
+            { url: "https://zonaeducacional.github.io/curriculo/", name: "Currículo", category: "ZONAEDUCACIONAL", type: "tool", description: "Gestor de currículos" },
+            { url: "https://zonaeducacional.github.io/hubeduapps/", name: "Hub Edu Apps", category: "ZONAEDUCACIONAL", type: "portal", description: "Hub de aplicações educacionais" },
+            { url: "https://zonaeducacional.github.io/portfolio/", name: "Portfolio", category: "ZONAEDUCACIONAL", type: "tool", description: "Portfolio de projetos" },
+            { url: "https://zonaeducacional.github.io/vibemanifesto-lp/", name: "Vibe Manifesto", category: "ZONAEDUCACIONAL", type: "app", description: "Manifesto digital" },
+            { url: "https://zonaeducacional.github.io/vibecodingprof/", name: "Vibe Coding", category: "ZONAEDUCACIONAL", type: "tool", description: "Plataforma de programação" },
+            { url: "https://zonaeducacional.github.io/mural/", name: "Mural", category: "ZONAEDUCACIONAL", type: "app", description: "Mural digital colaborativo" },
+            { url: "https://zonaeducacional.github.io/eravaliativo/", name: "Era Avaliativo", category: "ZONAEDUCACIONAL", type: "tool", description: "Sistema avaliativo" },
+            { url: "https://zonaeducacional.github.io/escaperevindaval8/", name: "Escape Revinda", category: "ZONAEDUCACIONAL", type: "game", description: "Jogo escape room educacional" },
+            { url: "https://zonaeducacional.github.io/escaperoomaval9/", name: "Escape Room", category: "ZONAEDUCACIONAL", type: "game", description: "Escape room educacional" },
+            { url: "https://zonaeducacional.github.io/design3/", name: "Design 3", category: "ZONAEDUCACIONAL", type: "tool", description: "Ferramenta de design" },
+            { url: "https://zonaeducacional.github.io/repositorios/", name: "Repositórios", category: "ZONAEDUCACIONAL", type: "portal", description: "Central de repositórios" },
+            { url: "https://zonaeducacional.github.io/projetoadoles/", name: "Projeto Adoles", category: "ZONAEDUCACIONAL", type: "app", description: "Projeto para adolescentes" },
+            { url: "https://zonaeducacional.github.io/blog/", name: "Blog", category: "ZONAEDUCACIONAL", type: "app", description: "Blog educacional" },
+            { url: "https://zonaeducacional.github.io/podcast/", name: "Podcast", category: "ZONAEDUCACIONAL", type: "app", description: "Plataforma de podcasts" },
+            { url: "https://zonaeducacional.github.io/1983/", name: "Projeto 1983", category: "ZONAEDUCACIONAL", type: "app", description: "Projeto histórico educacional" },
+            { url: "https://zonaeducacional.github.io/escaperoomegito/", name: "Escape Egito", category: "ZONAEDUCACIONAL", type: "game", description: "Jogo escape do Egito" },
+            { url: "https://zonaeducacional.github.io/escaperoommeso/", name: "Escape Meso", category: "ZONAEDUCACIONAL", type: "game", description: "Jogo escape mesoamericano" },
+            { url: "https://zonaeducacional.github.io/badges/", name: "Badges", category: "ZONAEDUCACIONAL", type: "tool", description: "Sistema de badges" },
+            { url: "https://zonaeducacional.github.io/argumentando/", name: "Argumentando", category: "ZONAEDUCACIONAL", type: "tool", description: "Ferramenta de argumentação" },
+            { url: "https://zonaeducacional.github.io/analisetextua/", name: "Análise Textual", category: "ZONAEDUCACIONAL", type: "tool", description: "Analisador de textos" },
+            { url: "https://zonaeducacional.github.io/vidmagem/", name: "Vidmagem", category: "ZONAEDUCACIONAL", type: "tool", description: "Editor de vídeos educacional" },
+            { url: "https://zonaeducacional.github.io/geoapp/", name: "GeoApp", category: "ZONAEDUCACIONAL", type: "app", description: "Aplicativo de geografia" },
+            { url: "https://zonaeducacional.github.io/aiparaprof/", name: "IA para Prof", category: "ZONAEDUCACIONAL", type: "tool", description: "Assistente IA para professores" },
+            { url: "https://zonaeducacional.github.io/suiteprofai/", name: "Suite Prof AI", category: "ZONAEDUCACIONAL", type: "tool", description: "Suite de IA para professores" },
+            { url: "https://zonaeducacional.github.io/radio/", name: "Rádio", category: "ZONAEDUCACIONAL", type: "app", description: "Rádio educacional online" },
+            { url: "https://zonaeducacional.github.io/8ano3unid/", name: "8º Ano 3ª Unid", category: "ZONAEDUCACIONAL", type: "app", description: "Conteúdo para 8º ano" },
+            { url: "https://zonaeducacional.github.io/trilhas/", name: "Trilhas", category: "ZONAEDUCACIONAL", type: "app", description: "Trilhas de aprendizagem" },
+            { url: "https://zonaeducacional.github.io/cursoai/", name: "Curso IA", category: "ZONAEDUCACIONAL", type: "app", description: "Curso de Inteligência Artificial" },
+            { url: "https://zonaeducacional.github.io/ias/", name: "IAs", category: "ZONAEDUCACIONAL", type: "tool", description: "Ferramentas de IA" },
+            { url: "https://zonaeducacional.github.io/educsal/", name: "EducSal", category: "ZONAEDUCACIONAL", type: "app", description: "Plataforma educacional" },
+            { url: "https://zonaeducacional.github.io/homenagemprof/", name: "Homenagem Prof", category: "ZONAEDUCACIONAL", type: "app", description: "Homenagem aos professores" },
+            { url: "https://zonaeducacional.github.io/repos/", name: "Repos", category: "ZONAEDUCACIONAL", type: "portal", description: "Central de repositórios" },
+            { url: "https://zonaeducacional.github.io/blogeducacaoecultura/", name: "Blog Educação", category: "ZONAEDUCACIONAL", type: "app", description: "Blog de educação e cultura" },
+            { url: "https://zonaeducacional.github.io/conto/", name: "Conto", category: "ZONAEDUCACIONAL", type: "app", description: "Plataforma de contos" },
+            { url: "https://zonaeducacional.github.io/homenagemprof2/", name: "Homenagem Prof 2", category: "ZONAEDUCACIONAL", type: "app", description: "Segunda homenagem aos professores" },
+            { url: "https://zonaeducacional.github.io/emchomenagen/", name: "EM Homenagem", category: "ZONAEDUCACIONAL", type: "app", description: "Homenagem especial" },
+            { url: "https://zonaeducacional.github.io/teste/", name: "Teste", category: "ZONAEDUCACIONAL", type: "tool", description: "Plataforma de testes" },
+            { url: "https://zonaeducacional.github.io/carta/", name: "Carta", category: "ZONAEDUCACIONAL", type: "app", description: "Plataforma de cartas" },
+            { url: "https://zonaeducacional.github.io/meusappsvibe/", name: "Meus Apps Vibe", category: "ZONAEDUCACIONAL", type: "portal", description: "Coleção de apps" },
+            { url: "https://v0-admin-panel-reform.vercel.app/", name: "Admin Panel", category: "ZONAEDUCACIONAL", type: "tool", description: "Painel administrativo" },
+            { url: "https://zonaeducacional.github.io/appronto/", name: "App Pronto", category: "ZONAEDUCACIONAL", type: "app", description: "Aplicativo pronto para uso" },
+            { url: "https://zonaeducacional.github.io/avIIIUnid7ano/", name: "Avaliação 7º Ano", category: "ZONAEDUCACIONAL", type: "tool", description: "Sistema de avaliação" },
+            { url: "https://zonaeducacional.github.io/guiasalinas/", name: "Guia Salinas", category: "ZONAEDUCACIONAL", type: "app", description: "Guia educacional" },
+            { url: "https://zonaeducacional.github.io/projetovozesdamargarida/", name: "Vozes da Margarida", category: "ZONAEDUCACIONAL", type: "app", description: "Projeto literário" },
+            { url: "https://v0-modernize-website-otks.vercel.app/", name: "Website Modernizado", category: "ZONAEDUCACIONAL", type: "app", description: "Site modernizado" },
+            { url: "https://v0-untitled-chat-woad-eight.vercel.app/", name: "Chat Anônimo", category: "ZONAEDUCACIONAL", type: "app", description: "Sistema de chat" },
+            { url: "https://zonaeducacional.github.io/note/", name: "Note", category: "ZONAEDUCACIONAL", type: "tool", description: "Aplicativo de notas" },
+            { url: "https://travessia-edu-uk6enm5kl6ldaamuwrwml.zonaeducacional.workers.dev/", name: "Travessia Edu", category: "ZONAEDUCACIONAL", type: "app", description: "Plataforma educacional" },
+            { url: "https://vercel.com/sergioaraujo709-3175s-projects/v0-plataforma-debate-e-publica/EU7T5FGDoohHMqyz97SEU8h3oXGB", name: "Plataforma Debate", category: "ZONAEDUCACIONAL", type: "app", description: "Plataforma de debates" },
+            
+            // VCDEVAPP
+            { url: "https://vcdevapps-cyber.github.io/classnoteprof/", name: "ClassNoteProf", category: "VCDEVAPP", type: "app", description: "Aplicativo de notas para professores" },
+            { url: "https://vcdevapps-cyber.github.io/landingnotclass/", name: "Landing NotClass", category: "VCDEVAPP", type: "app", description: "Landing page educacional" },
+            { url: "https://vcdevapps-cyber.github.io/mokupcn/", name: "Mokup CN", category: "VCDEVAPP", type: "tool", description: "Ferramenta de mockup" },
+            { url: "https://vcdevapps-cyber.github.io/gpia/", name: "GPIA", category: "VCDEVAPP", type: "tool", description: "Gestor de projetos" },
+            { url: "https://vcdevapps-cyber.github.io/storevcapps/", name: "Store VC Apps", category: "VCDEVAPP", type: "portal", description: "Loja de aplicativos" },
+            { url: "https://vcdevapps-cyber.github.io/coordedu/", name: "CoordEdu", category: "VCDEVAPP", type: "app", description: "Coordenador educacional" },
+            { url: "https://vcdevapps-cyber.github.io/eventos/", name: "Eventos", category: "VCDEVAPP", type: "app", description: "Gestor de eventos" },
+            { url: "https://vcdevapps-cyber.github.io/offline-first/", name: "Offline First", category: "VCDEVAPP", type: "app", description: "Aplicativo offline" },
+            { url: "https://vcdevapps-cyber.github.io/sistematiza/", name: "Sistematiza", category: "VCDEVAPP", type: "tool", description: "Sistema de organização" },
+            
+            // SERGIODEV
+            { url: "https://v0-mesopotamia-rpg.vercel.app/", name: "Mesopotâmia RPG", category: "SERGIODEV", type: "game", description: "Jogo RPG da Mesopotâmia" },
+            { url: "https://v0-melhorar-codigo-inky.vercel.app/", name: "Código Inky", category: "SERGIODEV", type: "tool", description: "Ferramenta de código" },
+            { url: "https://v0-modern-podcast-app.vercel.app/", name: "Podcast Moderno", category: "SERGIODEV", type: "app", description: "Aplicativo de podcasts" },
+            { url: "https://sergiodeplus.github.io/hub/", name: "Hub Sergio", category: "SERGIODEV", type: "portal", description: "Hub central de projetos" },
+            { url: "https://sergiodeplus.github.io/reduc/", name: "Reduc", category: "SERGIODEV", type: "tool", description: "Redutor de conteúdo" },
+            { url: "https://sergiodeplus.github.io/literosfera/", name: "Literosfera", category: "SERGIODEV", type: "app", description: "Plataforma literária" },
+            { url: "https://sergiodeplus.github.io/literosferapro/", name: "Literosfera Pro", category: "SERGIODEV", type: "app", description: "Versão pro da plataforma" },
+            { url: "https://sergiodeplus.github.io/trilhas2026/", name: "Trilhas 2026", category: "SERGIODEV", type: "app", description: "Trilhas de aprendizagem futuras" }
+        ];
+
+        // State
+        let currentCategory = 'all';
+        let currentFilter = 'all';
+        let searchTerm = '';
+
+        // DOM elements
+        const repositoriesGrid = document.getElementById('repositoriesGrid');
+        const searchInput = document.getElementById('searchInput');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const emptyState = document.getElementById('emptyState');
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        const filterTags = document.querySelectorAll('.filter-tag');
+
+        // Initialize
+        function init() {
+            updateCounts();
+            renderRepositories();
+            setupEventListeners();
+            
+            // Check for saved theme preference
+            if (localStorage.getItem('theme') === 'dark' || 
+                (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        }
+
+        // Update counts
+        function updateCounts() {
+            const totalCount = document.getElementById('totalCount');
+            const zonaCount = document.getElementById('zonaCount');
+            const vcCount = document.getElementById('vcCount');
+            const sergioCount = document.getElementById('sergioCount');
+            const totalProjects = document.getElementById('totalProjects');
+            
+            totalCount.textContent = repositories.length;
+            zonaCount.textContent = repositories.filter(r => r.category === 'ZONAEDUCACIONAL').length;
+            vcCount.textContent = repositories.filter(r => r.category === 'VCDEVAPP').length;
+            sergioCount.textContent = repositories.filter(r => r.category === 'SERGIODEV').length;
+            totalProjects.textContent = repositories.length;
+        }
+
+        // Render repositories
+        function renderRepositories() {
+            let filteredRepos = repositories;
+            
+            // Filter by category
+            if (currentCategory !== 'all') {
+                filteredRepos = filteredRepos.filter(repo => repo.category === currentCategory);
+            }
+            
+            // Filter by type
+            if (currentFilter !== 'all') {
+                filteredRepos = filteredRepos.filter(repo => repo.type === currentFilter);
+            }
+            
+            // Filter by search term
+            if (searchTerm) {
+                filteredRepos = filteredRepos.filter(repo => 
+                    repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    repo.description.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+            }
+            
+            // Show empty state if no results
+            if (filteredRepos.length === 0) {
+                repositoriesGrid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            
+            // Create cards
+            repositoriesGrid.innerHTML = filteredRepos.map(repo => `
+                <div class="card-hover bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden animate-fade-in">
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="font-semibold text-lg">${repo.name}</h3>
+                            <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(repo.category)}">
+                                ${repo.category}
+                            </span>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">${repo.description}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500 dark:text-gray-400">
+                                <i class="fas fa-tag mr-1"></i>${getTypeLabel(repo.type)}
+                            </span>
+                            <a href="${repo.url}" target="_blank" 
+                               class="px-3 py-1 bg-violet-600 hover:bg-violet-700 text-white text-sm rounded-md transition-colors">
+                                <i class="fas fa-external-link-alt mr-1"></i>Acessar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Get category color
+        function getCategoryColor(category) {
+            switch (category) {
+                case 'ZONAEDUCACIONAL':
+                    return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+                case 'VCDEVAPP':
+                    return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+                case 'SERGIODEV':
+                    return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300';
+                default:
+                    return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+            }
+        }
+
+        // Get type label
+        function getTypeLabel(type) {
+            switch (type) {
+                case 'app':
+                    return 'Aplicação';
+                case 'game':
+                    return 'Jogo';
+                case 'tool':
+                    return 'Ferramenta';
+                case 'portal':
+                    return 'Portal';
+                default:
+                    return 'Outro';
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Dark mode toggle
+            darkModeToggle.addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+                localStorage.setItem('theme', 
+                    document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+                );
+            });
+            
+            // Menu toggle
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('-translate-x-full');
+            });
+            
+            // Sidebar close
+            sidebarClose.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+            });
+            
+            // Search input
+            searchInput.addEventListener('input', (e) => {
+                searchTerm = e.target.value;
+                renderRepositories();
+            });
+            
+            // Category buttons
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentCategory = btn.dataset.category;
+                    
+                    // Update active state
+                    categoryBtns.forEach(b => b.classList.remove('bg-violet-100', 'dark:bg-gray-700'));
+                    btn.classList.add('bg-violet-100', 'dark:bg-gray-700');
+                    
+                    // Close sidebar on mobile
+                    if (window.innerWidth < 1024) {
+                        sidebar.classList.add('-translate-x-full');
+                    }
+                    
+                    renderRepositories();
+                });
+            });
+            
+            // Filter tags
+            filterTags.forEach(tag => {
+                tag.addEventListener('click', () => {
+                    currentFilter = tag.dataset.filter;
+                    
+                    // Update active state
+                    filterTags.forEach(t => {
+                        t.classList.remove('bg-violet-600', 'text-white');
+                        t.classList.add('bg-gray-200', 'dark:bg-gray-700');
+                    });
+                    tag.classList.remove('bg-gray-200', 'dark:bg-gray-700');
+                    tag.classList.add('bg-violet-600', 'text-white');
+                    
+                    renderRepositories();
+                });
+            });
+        }
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
